@@ -131,6 +131,7 @@ def main():
     parser.add_argument("order_file", help="Text file specifying the order of files (filename|Chapter Title)")
     parser.add_argument("output_file", help="Output .m4b filename")
     parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output")
+    parser.add_argument("--cover", help="Path to cover image (jpg/png) to embed")
     
     args = parser.parse_args()
 
@@ -139,6 +140,7 @@ def main():
     input_dir = args.input_dir
     order_file_path = args.order_file
     output_file = args.output_file
+    cover_image_path = args.cover
 
     if not os.path.isdir(input_dir):
         print(f"Error: Input directory '{input_dir}' does not exist.")
@@ -146,6 +148,10 @@ def main():
     
     if not os.path.isfile(order_file_path):
         print(f"Error: Order file '{order_file_path}' does not exist.")
+        sys.exit(1)
+        
+    if cover_image_path and not os.path.isfile(cover_image_path):
+        print(f"Error: Cover image '{cover_image_path}' not found.")
         sys.exit(1)
 
     chapters = []
@@ -265,14 +271,37 @@ def main():
         '-f', 'concat',
         '-safe', '0',
         '-i', concat_list_path,
-        '-i', metadata_path,
+        '-i', metadata_path
+    ]
+
+    # Add cover image input if provided
+    if cover_image_path:
+        print(f"Embedding cover image: {cover_image_path}")
+        cmd.extend(['-i', cover_image_path])
+
+    cmd.extend([
         '-map_metadata', '1',
         '-c', 'copy',
-        '-map', '0:a',
+        '-map', '0:a'
+    ])
+
+    if cover_image_path:
+        # Map the cover image stream (input 2)
+        # -c:v copy if usage allows, but sometimes safest to let ffmpeg handle it or force mjpeg
+        # -disposition:v:0 attached_pic marks it as cover art
+        cmd.extend([
+            '-map', '2:v',
+            '-c:v', 'copy',
+            '-disposition:v:0', 'attached_pic',
+            '-metadata:s:v', 'title="Album cover"',
+            '-metadata:s:v', 'comment="Cover (front)"' 
+        ])
+
+    cmd.extend([
         '-f', 'mp4',
         '-y',
         output_file
-    ]
+    ])
 
     try:
         subprocess.run(cmd, check=True)

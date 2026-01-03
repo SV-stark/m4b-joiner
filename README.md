@@ -37,12 +37,16 @@ A simple Python script to merge multiple MP3 files into a single chapterized M4B
     python m4b-joiner.py "path/to/mp3_folder" "path/to/chapters.txt" "output_book.m4b"
     ```
 
+    python m4b-joiner.py "path/to/mp3_folder" "path/to/chapters.txt" "output_book.m4b" -v
+    ```
+
     **Optional Arguments**:
     *   `-v`, `--verbose`: Enable detailed output (file analysis, parameters).
+    *   `--cover`: Path to an image file (e.g., `cover.jpg`) to embed as the audiobook cover art.
 
     **Example**:
     ```bash
-    python m4b-joiner.py . chapters.txt my_audiobook.m4b -v
+    python m4b-joiner.py . chapters.txt my_audiobook.m4b --cover cover.jpg
     ```
 
 ## Notes
