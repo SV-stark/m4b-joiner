@@ -1,0 +1,9 @@
+# No external Python libraries are required.
+# This script uses standard libraries: argparse, os, sys, subprocess, shutil, json.
+
+# SYSTEM REQUIREMENT:
+# ffmpeg and ffprobe must be installed and available in your system PATH.
+#
+# Windows: https://ffmpeg.org/download.html
+# Linux: sudo apt install ffmpeg / sudo dnf install ffmpeg
+# macOS: brew install ffmpeg
